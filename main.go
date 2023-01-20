@@ -24,14 +24,18 @@ func init() {
 }
 
 func main() {
-	wolframClient, err := services.NewWolframClient(os.Getenv("WOLFRAM_APP_ID"))
-	errHandler(err)
+	// wolframClient, err := services.NewWolframClient(os.Getenv("WOLFRAM_APP_ID"))
+	// errHandler(err)
 	gptClient, err := services.NewGptClient(os.Getenv("CHAT_GPT_APP_ID"))
 	errHandler(err)
+	latexClient := &services.LatexClient{}
+	go latexClient.Test()
+	codeClient := &services.CodeClient{}
+	go codeClient.Test()
 	Bot, err := api.NewBot(tele.Settings{
 		Token:  os.Getenv("TELEGRAM_API"),
 		Poller: Poller,
-	}, wolframClient, &services.LatexClient{}, gptClient)
+	}, latexClient, codeClient, gptClient)
 	errHandler(err)
 	Bot.Start()
 }

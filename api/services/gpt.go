@@ -3,6 +3,8 @@ package services
 import (
 	"context"
 	"fmt"
+	"log"
+	"time"
 
 	gpt3 "github.com/PullRequestInc/go-gpt3"
 	tele "gopkg.in/telebot.v3"
@@ -35,7 +37,9 @@ func NewGptClient(apiKey string) (*GptCLient, error) {
 func (g *GptCLient) Handler() tele.HandlerFunc {
 	return func(ctx tele.Context) error {
 		res := make(chan string)
+		log.Println("getting gpt result...")
 		go func() {
+			defer close(res)
 			msg := ctx.Message().Payload
 			resp, err := g.Completion(context.Background(), gpt3.CompletionRequest{
 				Prompt:    []string{msg},
@@ -48,8 +52,17 @@ func (g *GptCLient) Handler() tele.HandlerFunc {
 			} else {
 				res <- resp.Choices[0].Text
 			}
+			log.Println("got gpt result")
 		}()
-		return ctx.Send(<-res)
+		select {
+		case result := <-res:
+			fmt.Printf("sent gpt result: %s\n", result)
+			return ctx.Reply(result)
+		case <-time.After(1000 * time.Millisecond):
+			result := "timed out waiting for gpt api"
+			fmt.Println(result)
+			return ctx.Reply(result)
+		}
 	}
 }
 

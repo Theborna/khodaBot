@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/base16/monokai.min.css" />
+    <title>Document</title>
+</head>
+
+<body>
+
+    <pre>
+        <code>    %v
+        </code>
+    </pre>
+    <style>
+        body {
+            background-color: #7277af;
+        }
+
+        pre code {
+            border-radius: 1em;
+            box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.7) 0px 6px 6px;
+        }
+
+        pre.code {
+            white-space: pre-wrap;
+        }
+
+        pre.code::before {
+            counter-reset: listing;
+        }
+
+        pre.code code {
+            counter-increment: listing;
+        }
+
+        pre.code code::before {
+            content: counter(listing) ". ";
+            display: inline-block;
+            width: 8em;
+            padding-left: auto;
+            margin-left: auto;
+            text-align: right;
+        }
+    </style>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highlightjs-line-numbers.js/dist/highlightjs-line-numbers.min.js"></script>
+    <script>
+        hljs.initHighlightingOnLoad();
+        hljs.initLineNumbersOnLoad({
+            startFrom: 0
+        });
+    </script>
+</body>
+
+</html>

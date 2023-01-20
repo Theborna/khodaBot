@@ -37,7 +37,6 @@ func (m *WolframClient) Handler() tele.HandlerFunc {
 			return ctx.Reply("too short!")
 		}
 		wg := sync.WaitGroup{}
-		u := url.Values{}
 		var res string
 		var fail error
 		fail = nil
@@ -51,13 +50,16 @@ func (m *WolframClient) Handler() tele.HandlerFunc {
 		wg.Add(1)
 		go func() {
 			log.Println("getting spoken answer")
-			resp, err := m.GetSpokentAnswerQuery(query, wolfram.Metric, 2000)
+			resp, err := m.GetSpokentAnswerQuery(query, wolfram.Metric, 2)
 			errHandler(err)
 			wg.Done()
 			log.Println("got spoken answer")
 			res = resp
 		}()
 		var res2 io.ReadCloser
+		u := url.Values{}
+		u.Add("timeout", "2")
+		u.Add("units", "metric")
 		wg.Add(1)
 		go func() {
 			log.Println("getting image answer")
@@ -72,6 +74,7 @@ func (m *WolframClient) Handler() tele.HandlerFunc {
 		if fail != nil {
 			return fail
 		}
+		log.Println("sent result")
 		return ctx.SendAlbum(tele.Album{&tele.Photo{
 			File:    tele.FromReader(res2),
 			Caption: res,

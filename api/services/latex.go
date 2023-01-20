@@ -6,12 +6,21 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"regexp"
+	"strconv"
+	"strings"
 
 	tele "gopkg.in/telebot.v3"
 	"gopkg.in/telebot.v3/middleware"
 )
 
 type LatexClient struct{}
+
+var errHandler = func(err error) {
+	if err != nil {
+		log.Fatal(err)
+	}
+}
 
 func (l *LatexClient) Test() {
 	text := `
@@ -25,9 +34,14 @@ func (l *LatexClient) Test() {
 func (l *LatexClient) Handler() tele.HandlerFunc {
 	return func(ctx tele.Context) (err error) {
 		go func() {
-			input := ctx.Message().Payload
+			input := ctx.Message().ReplyTo.Text[len(l.Method()):]
+			if ctx.Message().IsReply() {
+				input = ctx.Message().ReplyTo.Text
+			}
+			input = fixInput(input)
+			fmt.Printf("input: %v\n", input)
 			l.CreateImage(input)
-			b, err2 := os.ReadFile("latex.png")
+			b, err2 := os.ReadFile("./temp/latex/tmp.png")
 			err = err2
 			ctx.SendAlbum(tele.Album{&tele.Photo{
 				File: tele.FromReader(bytes.NewReader(b)),
@@ -38,25 +52,24 @@ func (l *LatexClient) Handler() tele.HandlerFunc {
 	}
 }
 
-func (l *LatexClient) CreateImage(text string) { // make this function work
+func fixInput(s string) string {
+	m, _ := regexp.Compile("/")
+	return m.ReplaceAllString(s, "\\")
+}
+
+func (l *LatexClient) CreateImage(text string) {
 	b, err := os.ReadFile("style/latex.html")
-	if err != nil {
-		log.Fatal(err)
-	}
-	html := fmt.Sprintf(string(b), l)
+	errHandler(err)
+	html := fmt.Sprintf(string(b), text)
 	file, err := os.Create("temp/latex/ltx.html")
-	if err != nil {
-		log.Fatal(err)
-	}
+	errHandler(err)
 	defer file.Close()
 	file.Write([]byte(html))
-	if err != nil {
-		fmt.Printf("err: %v\n", err)
-	}
-	err = exec.Command("./python html-to-image/main.py").Run()
-	if err != nil {
-		fmt.Printf("err: %v\n", err)
-	}
+	errHandler(err)
+	numLines := strings.Count(text, "\n") - 3
+	err = exec.Command("bash", "screenshot.sh", "./temp/latex/ltx.html",
+		"./temp/latex", "300", strconv.Itoa(300+numLines*10)).Run()
+	errHandler(err)
 }
 
 func (l *LatexClient) Method() string {
