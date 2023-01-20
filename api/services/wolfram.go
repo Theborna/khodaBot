@@ -1,6 +1,5 @@
 package services
 
-//!go get github.com/Krognol/go-wolfram
 import (
 	"fmt"
 	"io"

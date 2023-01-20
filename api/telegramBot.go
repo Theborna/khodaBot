@@ -10,6 +10,7 @@ type KhBot struct {
 	*tele.Bot
 }
 
+// get an instance of the KhBot api, with additional services as a parameter
 func NewBot(pref tele.Settings, services ...services.ServiceProvider) (*KhBot, error) {
 	b, err := tele.NewBot(pref)
 	Bot := &KhBot{
