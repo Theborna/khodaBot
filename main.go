@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	"kh-bot/api"
 	"kh-bot/api/services"
 	"log"
 	"os"
@@ -32,18 +32,15 @@ func main() {
 	// go latexClient.Test()
 	// codeClient := &services.CodeClient{}
 	// go codeClient.Test()
-	stableDiffClient, err := services.NewSDClient(os.Getenv("REPLICATE_API_KEY"))
-	errHandler(err)
-	fmt.Printf("stableDiffClient.Request: %v\n", stableDiffClient.Request)
-	err = stableDiffClient.Create()
-	errHandler(err)
-	fmt.Printf("stableDiffClient.Response: %v\n", stableDiffClient.Response)
-	// Bot, err := api.NewBot(tele.Settings{
-	// 	Token:  os.Getenv("TELEGRAM_API"),
-	// 	Poller: Poller,
-	// }, latexClient, codeClient)
+	stableDiffClient := &services.SDClient{}
+	// _, err := stableDiffClient.GetLink(1, []string{"woman, beautiful, elegany, golden braided hair golden eyes, green and gold caftan, dress, smiling, fairy, shiny, realistic ,4k"}, []string{})
 	// errHandler(err)
-	// Bot.Start()
+	Bot, err := api.NewBot(tele.Settings{
+		Token:  os.Getenv("TELEGRAM_API"),
+		Poller: Poller,
+	}, stableDiffClient)
+	errHandler(err)
+	Bot.Start()
 }
 
 func errHandler(err error) {

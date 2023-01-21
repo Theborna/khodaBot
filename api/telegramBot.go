@@ -1,7 +1,9 @@
 package api
 
 import (
+	"fmt"
 	"kh-bot/api/services"
+	"strings"
 
 	"gopkg.in/telebot.v3"
 	tele "gopkg.in/telebot.v3"
@@ -42,6 +44,7 @@ func (bot *KhBot) handlers(services ...services.ServiceProvider) {
 
 func startHandler() telebot.HandlerFunc {
 	return func(ctx telebot.Context) error {
-		return ctx.Send(WELCOME_TEXT)
+		return ctx.Send(WELCOME_TEXT,
+			fmt.Sprintf("current api's:\n%v", strings.Join(CURRENT_APIS, ", ")))
 	}
 }

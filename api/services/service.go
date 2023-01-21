@@ -11,4 +11,5 @@ type ServiceProvider interface {
 	Handler() telebot.HandlerFunc
 	Method() string
 	Middleware() []telebot.MiddlewareFunc
+	// Help() string
 }
