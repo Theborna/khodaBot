@@ -68,7 +68,7 @@ func (l *LatexClient) CreateImage(text string) {
 	errHandler(err)
 	numLines := strings.Count(text, "\n") - 3
 	err = exec.Command("bash", "screenshot.sh", "./temp/latex/ltx.html",
-		"./temp/latex", "300", strconv.Itoa(300+numLines*10)).Run()
+		"./temp/latex", "400", strconv.Itoa(300+numLines*10)).Run()
 	errHandler(err)
 }
 

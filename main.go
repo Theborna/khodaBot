@@ -1,7 +1,7 @@
 package main
 
 import (
-	"kh-bot/api"
+	"fmt"
 	"kh-bot/api/services"
 	"log"
 	"os"
@@ -26,18 +26,24 @@ func init() {
 func main() {
 	// wolframClient, err := services.NewWolframClient(os.Getenv("WOLFRAM_APP_ID"))
 	// errHandler(err)
-	gptClient, err := services.NewGptClient(os.Getenv("CHAT_GPT_APP_ID"))
+	// gptClient, err := services.NewGptClient(os.Getenv("CHAT_GPT_APP_ID"))
+	// errHandler(err)
+	// latexClient := &services.LatexClient{}
+	// go latexClient.Test()
+	// codeClient := &services.CodeClient{}
+	// go codeClient.Test()
+	stableDiffClient, err := services.NewSDClient(os.Getenv("REPLICATE_API_KEY"))
 	errHandler(err)
-	latexClient := &services.LatexClient{}
-	go latexClient.Test()
-	codeClient := &services.CodeClient{}
-	go codeClient.Test()
-	Bot, err := api.NewBot(tele.Settings{
-		Token:  os.Getenv("TELEGRAM_API"),
-		Poller: Poller,
-	}, latexClient, codeClient, gptClient)
+	fmt.Printf("stableDiffClient.Request: %v\n", stableDiffClient.Request)
+	err = stableDiffClient.Create()
 	errHandler(err)
-	Bot.Start()
+	fmt.Printf("stableDiffClient.Response: %v\n", stableDiffClient.Response)
+	// Bot, err := api.NewBot(tele.Settings{
+	// 	Token:  os.Getenv("TELEGRAM_API"),
+	// 	Poller: Poller,
+	// }, latexClient, codeClient)
+	// errHandler(err)
+	// Bot.Start()
 }
 
 func errHandler(err error) {
