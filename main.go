@@ -39,6 +39,7 @@ func main() {
 		Token:  os.Getenv("TELEGRAM_API"),
 		Poller: Poller,
 	}, wolframClient, gptClient, latexClient, codeClient, stableDiffClient)
+	// })
 	errHandler(err)
 	Bot.Start()
 }

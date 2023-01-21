@@ -129,6 +129,7 @@ func (c SDClient) GetLink(n int, prompt, negPrompt string) ([]resultUrl, error) 
 }
 
 func (c SDClient) parseInput(input string) (int, string, string, error) {
+	var err error
 	input = strings.ReplaceAll(input, "\n", " ") // remove all new lines
 	input = strings.ReplaceAll(input, "###", " ")
 	keywords := []string{"k:", "p:", "n:"}
@@ -156,7 +157,13 @@ func (c SDClient) parseInput(input string) (int, string, string, error) {
 	if n > 4 {
 		n = 4
 	}
-	return n, result["positive"], result["negative"], nil
+	if n == 0 {
+		err = fmt.Errorf("cant produce zero results")
+	}
+	if len(result["positive"]) == 0 {
+		err = fmt.Errorf("cannot find a 'p:' block")
+	}
+	return n, result["positive"], result["negative"], err
 }
 
 func (c SDClient) Method() string {

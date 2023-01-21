@@ -73,17 +73,16 @@ func (bot *KhBot) pongHandler() telebot.HandlerFunc {
 func (b *KhBot) reportHandler() tele.HandlerFunc {
 	return func(ctx tele.Context) error {
 		sender, message := ctx.Sender().Username, ctx.Message().Payload
-		text := fmt.Sprintf("sender: t.me/%s, message: %s", sender, message)
+		text := fmt.Sprintf("sender: t.me/%s, message: %s\n", sender, message)
 		if len(message) > 0 {
 			path := fmt.Sprintf("./reports/report_%v.txt", time.Now().Format("01-02-2006"))
-			file, err := os.Create(path)
+			f, err := os.OpenFile(path, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
 			if err != nil {
 				log.Fatal(err)
 				return ctx.Send("failed to write report")
 			}
-			defer file.Close()
-			file.Write([]byte(text))
-			if err != nil {
+			defer f.Close()
+			if _, err = f.WriteString(text); err != nil {
 				log.Fatal(err)
 				return ctx.Send("failed to write report")
 			}
