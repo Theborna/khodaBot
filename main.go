@@ -24,21 +24,21 @@ func init() {
 }
 
 func main() {
-	// wolframClient, err := services.NewWolframClient(os.Getenv("WOLFRAM_APP_ID"))
-	// errHandler(err)
-	// gptClient, err := services.NewGptClient(os.Getenv("CHAT_GPT_APP_ID"))
-	// errHandler(err)
-	// latexClient := &services.LatexClient{}
-	// go latexClient.Test()
-	// codeClient := &services.CodeClient{}
-	// go codeClient.Test()
+	wolframClient, err := services.NewWolframClient(os.Getenv("WOLFRAM_APP_ID"))
+	errHandler(err)
+	gptClient, err := services.NewGptClient(os.Getenv("CHAT_GPT_APP_ID"))
+	errHandler(err)
+	latexClient := &services.LatexClient{}
+	go latexClient.Test()
+	codeClient := &services.CodeClient{}
+	go codeClient.Test()
 	stableDiffClient := &services.SDClient{}
 	// _, err := stableDiffClient.GetLink(1, []string{"woman, beautiful, elegany, golden braided hair golden eyes, green and gold caftan, dress, smiling, fairy, shiny, realistic ,4k"}, []string{})
-	// errHandler(err)
+	errHandler(err)
 	Bot, err := api.NewBot(tele.Settings{
 		Token:  os.Getenv("TELEGRAM_API"),
 		Poller: Poller,
-	}, stableDiffClient)
+	}, wolframClient, gptClient, latexClient, codeClient, stableDiffClient)
 	errHandler(err)
 	Bot.Start()
 }

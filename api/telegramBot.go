@@ -2,8 +2,11 @@ package api
 
 import (
 	"fmt"
+	"io/ioutil"
 	"kh-bot/api/services"
+	"log"
 	"strings"
+	"time"
 
 	"gopkg.in/telebot.v3"
 	tele "gopkg.in/telebot.v3"
@@ -37,6 +40,10 @@ func NewBot(pref tele.Settings, services ...services.ServiceProvider) (*KhBot, e
 // add all function handles
 func (bot *KhBot) handlers(services ...services.ServiceProvider) {
 	bot.Handle("/start", startHandler())
+	bot.Handle("/hi", startHandler())
+	bot.Handle("/help", startHandler())
+	bot.Handle("/ping", bot.pongHandler())
+	bot.Handle("/report", bot.reportHandler())
 	for _, service := range services {
 		bot.Handle(service.Method(), service.Handler(), service.Middleware()...)
 	}
@@ -44,7 +51,36 @@ func (bot *KhBot) handlers(services ...services.ServiceProvider) {
 
 func startHandler() telebot.HandlerFunc {
 	return func(ctx telebot.Context) error {
-		return ctx.Send(WELCOME_TEXT,
-			fmt.Sprintf("current api's:\n%v", strings.Join(CURRENT_APIS, ", ")))
+		ctx.Send(WELCOME_TEXT)
+		return ctx.Send(fmt.Sprintf("current api's:\n%v", strings.Join(CURRENT_APIS, ", ")))
+	}
+}
+func (bot *KhBot) pongHandler() telebot.HandlerFunc {
+	return func(ctx telebot.Context) error {
+		start := time.Now()
+		myMsg := make(chan telebot.Message)
+		go func() {
+			msg, _ := bot.Reply(ctx.Message(), "Pinging...")
+			myMsg <- *msg
+		}()
+		resp := <-myMsg
+		ping := time.Since(start).Round(time.Millisecond)
+		_, err := bot.Edit(&resp, fmt.Sprintf("PONG!!!\n%v", ping))
+		return err
+	}
+}
+
+func (b *KhBot) reportHandler() tele.HandlerFunc {
+	return func(ctx tele.Context) error {
+		sender, message := ctx.Sender().Username, ctx.Message().Payload
+		text := fmt.Sprintf("sender: t.me/%s, message: %s", sender, message)
+		if len(message) > 0 {
+			err := ioutil.WriteFile(fmt.Sprintf("./reports/report_%v.txt", time.Now().Format("01-02-2006")), []byte(text), 0)
+			if err != nil {
+				log.Fatal(err)
+				return ctx.Send("failed to write report")
+			}
+		}
+		return ctx.Send("report sent successfully")
 	}
 }
