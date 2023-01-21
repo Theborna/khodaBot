@@ -2,9 +2,9 @@ package api
 
 import (
 	"fmt"
-	"io/ioutil"
 	"kh-bot/api/services"
 	"log"
+	"os"
 	"strings"
 	"time"
 
@@ -75,7 +75,14 @@ func (b *KhBot) reportHandler() tele.HandlerFunc {
 		sender, message := ctx.Sender().Username, ctx.Message().Payload
 		text := fmt.Sprintf("sender: t.me/%s, message: %s", sender, message)
 		if len(message) > 0 {
-			err := ioutil.WriteFile(fmt.Sprintf("./reports/report_%v.txt", time.Now().Format("01-02-2006")), []byte(text), 0)
+			path := fmt.Sprintf("./reports/report_%v.txt", time.Now().Format("01-02-2006"))
+			file, err := os.Create(path)
+			if err != nil {
+				log.Fatal(err)
+				return ctx.Send("failed to write report")
+			}
+			defer file.Close()
+			file.Write([]byte(text))
 			if err != nil {
 				log.Fatal(err)
 				return ctx.Send("failed to write report")

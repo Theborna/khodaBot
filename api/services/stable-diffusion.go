@@ -138,7 +138,7 @@ func (c SDClient) parseInput(input string) (int, string, string, error) {
 	}
 	inputs := strings.Split(input, "###")
 	result := map[string]string{"positive": "", "negative": ""}
-	n := 0
+	n := 1 // default value
 	for _, i := range inputs {
 		if len(i) < 1 {
 			continue
