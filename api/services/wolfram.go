@@ -47,6 +47,8 @@ func (m *WolframClient) Handler() tele.HandlerFunc {
 				fail = err
 			}
 		}
+		msg, _ := ctx.Bot().Reply(ctx.Message(), "getting results...")
+		defer ctx.Bot().Delete(msg)
 		wg.Add(1)
 		go func() {
 			log.Println("getting spoken answer")

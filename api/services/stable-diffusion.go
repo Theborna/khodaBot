@@ -3,6 +3,7 @@ package services
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"os"
 	"os/exec"
 	"regexp"
@@ -52,8 +53,10 @@ func (c SDClient) Handler() telebot.HandlerFunc {
 		if err != nil {
 			return ctx.Send(err.Error())
 		}
+		msg, _ := ctx.Bot().Reply(ctx.Message(), "getting results...")
+		defer ctx.Bot().Delete(msg)
 		resultUrl, err := c.GetLink(n, prompt, negPrompt)
-		if err != nil {
+		if err != nil && len(resultUrl) == 0 {
 			if err.Error() == PY_ERR {
 				err = fmt.Errorf("api failed to respond")
 			}
@@ -100,8 +103,9 @@ func (c SDClient) GetLink(n int, prompt, negPrompt string) ([]resultUrl, error) 
 			go func() {
 				defer wg.Done()
 				cmd := exec.Command("bash", "stable_diff.sh", path)
+				log.Print("calling stable_diff api")
 				out, e := cmd.Output()
-				fmt.Printf("out: %v\n", out)
+				log.Printf("out: %v\n", string(out))
 				if err == nil && e != nil {
 					err = e
 					return

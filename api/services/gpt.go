@@ -38,7 +38,9 @@ func (g *GptCLient) Handler() tele.HandlerFunc {
 	return func(ctx tele.Context) error {
 		res := make(chan string)
 		log.Println("getting gpt result...")
+		msg, _ := ctx.Bot().Reply(ctx.Message(), "getting results...")
 		go func() {
+			defer ctx.Bot().Delete(msg)
 			defer close(res)
 			msg := ctx.Message().Payload
 			resp, err := g.Completion(context.Background(), gpt3.CompletionRequest{

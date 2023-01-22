@@ -7,8 +7,6 @@ import (
 	"os"
 	"os/exec"
 	"regexp"
-	"strconv"
-	"strings"
 
 	tele "gopkg.in/telebot.v3"
 	"gopkg.in/telebot.v3/middleware"
@@ -33,8 +31,10 @@ func (l *LatexClient) Test() {
 
 func (l *LatexClient) Handler() tele.HandlerFunc {
 	return func(ctx tele.Context) (err error) {
+		msg, _ := ctx.Bot().Reply(ctx.Message(), "getting results...")
 		go func() {
-			input := ctx.Message().ReplyTo.Text[len(l.Method()):]
+			defer ctx.Bot().Delete(msg)
+			input := ctx.Message().Text[len(l.Method()):]
 			if ctx.Message().IsReply() {
 				input = ctx.Message().ReplyTo.Text
 			}
@@ -66,9 +66,8 @@ func (l *LatexClient) CreateImage(text string) {
 	defer file.Close()
 	file.Write([]byte(html))
 	errHandler(err)
-	numLines := strings.Count(text, "\n") - 3
 	err = exec.Command("bash", "screenshot.sh", "./temp/latex/ltx.html",
-		"./temp/latex", "400", strconv.Itoa(300+numLines*10)).Run()
+		"./temp/latex/tmp.png").Run()
 	errHandler(err)
 }
 

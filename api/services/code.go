@@ -38,7 +38,9 @@ func (l *CodeClient) Test() {
 
 func (l *CodeClient) Handler() tele.HandlerFunc {
 	return func(ctx tele.Context) (err error) {
+		msg, _ := ctx.Bot().Reply(ctx.Message(), "getting results...")
 		go func() {
+			defer ctx.Bot().Delete(msg)
 			input := ctx.Message().Text[len(l.Method()):]
 			if ctx.Message().IsReply() {
 				input = ctx.Message().ReplyTo.Text
