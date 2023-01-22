@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
-	"strconv"
-	"strings"
 
 	tele "gopkg.in/telebot.v3"
 	"gopkg.in/telebot.v3/middleware"
@@ -67,9 +65,8 @@ func (l *CodeClient) CreateImage(text string) {
 	defer file.Close()
 	file.Write([]byte(html))
 	errHandler(err)
-	numLines := strings.Count(text, "\n") - 3
 	err = exec.Command("bash", "screenshot.sh", "./temp/code/code.html",
-		"./temp/code", "600", strconv.Itoa(100+numLines*10)).Run()
+		"./temp/code/tmp.png").Run()
 	errHandler(err)
 }
 
