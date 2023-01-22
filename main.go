@@ -29,7 +29,7 @@ func main() {
 	gptClient, err := services.NewGptClient(os.Getenv("CHAT_GPT_APP_ID"))
 	errHandler(err)
 	latexClient := &services.LatexClient{}
-	go latexClient.Test()
+	// go latexClient.Test()
 	// codeClient := &services.CodeClient{}
 	// go codeClient.Test()
 	stableDiffClient := &services.SDClient{}
