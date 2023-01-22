@@ -29,16 +29,17 @@ func main() {
 	gptClient, err := services.NewGptClient(os.Getenv("CHAT_GPT_APP_ID"))
 	errHandler(err)
 	latexClient := &services.LatexClient{}
-	// go latexClient.Test()
+	go latexClient.Test()
 	// codeClient := &services.CodeClient{}
 	// go codeClient.Test()
 	stableDiffClient := &services.SDClient{}
 	// _, err := stableDiffClient.GetLink(1, []string{"woman, beautiful, elegany, golden braided hair golden eyes, green and gold caftan, dress, smiling, fairy, shiny, realistic ,4k"}, []string{})
 	errHandler(err)
+	compressClient := &services.CompressorClient{}
 	Bot, err := api.NewBot(tele.Settings{
 		Token:  os.Getenv("TELEGRAM_API"),
 		Poller: Poller,
-	}, wolframClient, gptClient, latexClient, stableDiffClient)
+	}, wolframClient, gptClient, latexClient, stableDiffClient, compressClient)
 	// })
 	errHandler(err)
 	Bot.Start()

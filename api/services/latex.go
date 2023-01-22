@@ -16,7 +16,7 @@ type LatexClient struct{}
 
 var errHandler = func(err error) {
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 }
 
@@ -40,9 +40,10 @@ func (l *LatexClient) Handler() tele.HandlerFunc {
 			}
 			input = fixInput(input)
 			fmt.Printf("input: %v\n", input)
-			err = l.CreateImage(input)
-			if err != nil {
+			err2 := l.CreateImage(input)
+			if err2 != nil {
 				ctx.Reply("caught error creating image")
+				fmt.Println("ridam")
 				return
 			}
 			b, err2 := os.ReadFile("./temp/latex/tmp.png")
@@ -52,7 +53,7 @@ func (l *LatexClient) Handler() tele.HandlerFunc {
 			}})
 			fmt.Printf("\"salam\": %v\n", "salam")
 		}()
-		return ctx.Send(err.Error())
+		return
 	}
 }
 
@@ -70,8 +71,11 @@ func (l *LatexClient) CreateImage(text string) (err error) {
 	defer file.Close()
 	file.Write([]byte(html))
 	errHandler(err)
-	err = exec.Command("bash", "screenshot.sh", "./temp/latex/ltx.html",
-		"./temp/latex/tmp.png").Run()
+	ex := exec.Command("bash", "screenshot.sh", "./temp/latex/ltx.html",
+		"./temp/latex/tmp.png")
+	o, err := ex.Output()
+	fmt.Printf("err: %v\n", err)
+	fmt.Printf("o: %v\n", string(o))
 	errHandler(err)
 	return err
 }

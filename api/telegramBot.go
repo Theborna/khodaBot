@@ -24,7 +24,7 @@ var (
 	I'm maintained by https://t.me/bornaKhodabandeh and you can see my source code
 	at https://github.com/Theborna/khodaBot
 	`
-	CURRENT_APIS = []string{"wolfram alpha", "latex to image", "gpt3 client", "code to image", "stable diffusion"}
+	CURRENT_APIS = []string{"wolfram alpha", "latex to image", "gpt3 client", "code to image", "stable diffusion", "pdf compressor client"}
 )
 
 // get an instance of the KhBot api, with additional services as a parameter
@@ -78,12 +78,12 @@ func (b *KhBot) reportHandler() tele.HandlerFunc {
 			path := fmt.Sprintf("./reports/report_%v.txt", time.Now().Format("01-02-2006"))
 			f, err := os.OpenFile(path, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
 			if err != nil {
-				log.Fatal(err)
+				log.Print(err)
 				return ctx.Send("failed to write report")
 			}
 			defer f.Close()
 			if _, err = f.WriteString(text); err != nil {
-				log.Fatal(err)
+				log.Print(err)
 				return ctx.Send("failed to write report")
 			}
 		}

@@ -47,9 +47,7 @@ func (c SDClient) Handler() telebot.HandlerFunc {
 	return func(ctx telebot.Context) error {
 		var input string
 		if !ctx.Message().IsReply() {
-			if input = ctx.Message().Text[len(c.Method()):]; len(input) < 4 {
-				return ctx.Send(HELP)
-			}
+			return ctx.Send(HELP)
 		}
 		input = ctx.Message().ReplyTo.Text
 		n, prompt, negPrompt, err := c.parseInput(input)
