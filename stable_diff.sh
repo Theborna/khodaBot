@@ -1,2 +1,2 @@
 #!/bin/sh
-python.exe api/replicate/stable_diff.py $1
+python3 api/replicate/stable_diff.py $1
