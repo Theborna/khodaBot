@@ -40,7 +40,11 @@ func (l *LatexClient) Handler() tele.HandlerFunc {
 			}
 			input = fixInput(input)
 			fmt.Printf("input: %v\n", input)
-			l.CreateImage(input)
+			err = l.CreateImage(input)
+			if err != nil {
+				ctx.Reply("caught error creating image")
+				return
+			}
 			b, err2 := os.ReadFile("./temp/latex/tmp.png")
 			err = err2
 			ctx.SendAlbum(tele.Album{&tele.Photo{
@@ -48,7 +52,7 @@ func (l *LatexClient) Handler() tele.HandlerFunc {
 			}})
 			fmt.Printf("\"salam\": %v\n", "salam")
 		}()
-		return
+		return ctx.Send(err.Error())
 	}
 }
 
@@ -57,7 +61,7 @@ func fixInput(s string) string {
 	return m.ReplaceAllString(s, "\\")
 }
 
-func (l *LatexClient) CreateImage(text string) {
+func (l *LatexClient) CreateImage(text string) (err error) {
 	b, err := os.ReadFile("style/latex.html")
 	errHandler(err)
 	html := fmt.Sprintf(string(b), text)
@@ -69,6 +73,7 @@ func (l *LatexClient) CreateImage(text string) {
 	err = exec.Command("bash", "screenshot.sh", "./temp/latex/ltx.html",
 		"./temp/latex/tmp.png").Run()
 	errHandler(err)
+	return err
 }
 
 func (l *LatexClient) Method() string {
