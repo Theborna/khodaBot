@@ -1,2 +1,2 @@
 #!/bin/sh
-./wkhtmltoimage.exe --enable-javascript --javascript-delay 5000 $1 $2
+wkhtmltoimage --enable-javascript --javascript-delay 5000 $1 $2

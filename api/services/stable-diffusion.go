@@ -45,10 +45,13 @@ const PY_ERR = `exit status 1`
 
 func (c SDClient) Handler() telebot.HandlerFunc {
 	return func(ctx telebot.Context) error {
+		var input string
 		if !ctx.Message().IsReply() {
-			return ctx.Send(HELP)
+			if input = ctx.Message().Payload; len(input) < 4 {
+				return ctx.Send(HELP)
+			}
 		}
-		input := ctx.Message().ReplyTo.Text
+		input = ctx.Message().ReplyTo.Text
 		n, prompt, negPrompt, err := c.parseInput(input)
 		if err != nil {
 			return ctx.Send(err.Error())
