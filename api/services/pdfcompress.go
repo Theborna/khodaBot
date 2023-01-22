@@ -30,6 +30,10 @@ func (p *CompressorClient) Handler() telebot.HandlerFunc {
 		if m == nil {
 			return ctx.Send(NO_FILE_COMPRESS)
 		}
+		name := "compressed"
+		if len(ctx.Message().Payload) > 0 {
+			name = ctx.Message().Payload
+		}
 		switch m.MediaType() {
 		case "document":
 			err := make(chan error)
@@ -58,7 +62,7 @@ func (p *CompressorClient) Handler() telebot.HandlerFunc {
 				file := &tele.Document{
 					File:     tele.FromDisk(s),
 					Caption:  CAPTION,
-					FileName: "compressed",
+					FileName: name,
 				}
 				_, e = file.Send(ctx.Bot(), ctx.Recipient(), &tele.SendOptions{ReplyTo: ctx.Message()})
 				return e
