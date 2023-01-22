@@ -1,2 +1,2 @@
 #!/bin/sh
-./wkhtmltoimage.exe --load-error-handling ignore --enable-javascript --javascript-delay 3000 $1 $2
+./wkhtmltoimage.exe --enable-javascript --javascript-delay 5000 $1 $2
