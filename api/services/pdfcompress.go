@@ -34,6 +34,7 @@ func (p *CompressorClient) Handler() telebot.HandlerFunc {
 		if len(ctx.Message().Payload) > 0 {
 			name = ctx.Message().Payload
 		}
+		dpi := 100
 		switch m.MediaType() {
 		case "document":
 			err := make(chan error)
@@ -53,7 +54,7 @@ func (p *CompressorClient) Handler() telebot.HandlerFunc {
 				if e != nil {
 					return e
 				}
-				s, e := p.compressFile(path)
+				s, e := p.compressFile(path, dpi)
 				if e != nil {
 					return e
 				}
@@ -62,7 +63,7 @@ func (p *CompressorClient) Handler() telebot.HandlerFunc {
 				file := &tele.Document{
 					File:     tele.FromDisk(s),
 					Caption:  CAPTION,
-					FileName: name,
+					FileName: fmt.Sprintf("%s.pdf", name),
 				}
 				_, e = file.Send(ctx.Bot(), ctx.Recipient(), &tele.SendOptions{ReplyTo: ctx.Message()})
 				return e
@@ -74,11 +75,11 @@ func (p *CompressorClient) Handler() telebot.HandlerFunc {
 		}
 	}
 }
-func (p *CompressorClient) compressFile(path string) (string, error) {
+func (p *CompressorClient) compressFile(path string, dpi int) (string, error) {
 	path2 := fmt.Sprintf("./temp/pdf/compressed_%v.pdf", time.Now().Unix())
 	defer os.Remove(path)
 	log.Printf("compressing file")
-	ex := exec.Command("bash", "compress.sh", path, path2)
+	ex := exec.Command("bash", "compress.sh", path, path2, fmt.Sprint(dpi))
 	_, err := ex.Output()
 	if err != nil {
 		return "", err
