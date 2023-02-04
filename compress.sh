@@ -37,7 +37,7 @@ shrink() {
         -q -dNOPAUSE -dBATCH -dSAFER \
         -sDEVICE=pdfwrite \
         -dCompatibilityLevel=1.3 \
-        -dPDFSETTINGS=/screen \
+        -dPDFSETTINGS=/ebook \
         -dEmbedAllFonts=true \
         -dSubsetFonts=true \
         -dAutoRotatePages=/None \

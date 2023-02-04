@@ -34,7 +34,7 @@ func (p *CompressorClient) Handler() telebot.HandlerFunc {
 		if len(ctx.Message().Payload) > 0 {
 			name = ctx.Message().Payload
 		}
-		dpi := 100
+		dpi := 160
 		switch m.MediaType() {
 		case "document":
 			err := make(chan error)
@@ -50,7 +50,7 @@ func (p *CompressorClient) Handler() telebot.HandlerFunc {
 			case e := <-err:
 				downloadTime := time.Since(start).Round(time.Millisecond)
 				log.Printf("downloadTime: %v\n", downloadTime)
-				ctx.Bot().Edit(msg, fmt.Sprintf("download successful.\ntook %v\ncompressing...", downloadTime))
+				ctx.Bot().Edit(msg, fmt.Sprintf("download successful.\ntook %v", downloadTime))
 				if e != nil {
 					return e
 				}
